@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 #Read in configuration file
-from Create_Deployment_Configuration import *
+from create_deployment_configuration import *
 
 #Set global URL's
 global_url= 'https://api.global.alertlogic.com/'
