@@ -37,10 +37,13 @@ role_arn = ""
 aws_id = ""
 
 #Manual/Automatic
-mode = "manual" 
-enabled = "true"
-#comma seperated list of regions (example)
-regions = ""
+mode = "manual"
+true = True
+false = False
+ct_install_region = "us-west-1"
 
-#comma seperated list of VPC's (example) 
-vpcs = ""
+#Properties for scoping
+regions = []
+
+#Entitlements
+entitlement = "Professional"

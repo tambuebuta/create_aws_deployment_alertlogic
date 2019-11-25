@@ -9,7 +9,8 @@ import time
 from datetime import datetime
 
 #Read in configuration file
-from create_deployment_configuration import *
+from create_deployment_properties import *
+from create_deployment_properties_test import *
 
 #Set global URL's
 global_url= 'https://api.global.alertlogic.com/'
@@ -189,6 +190,14 @@ print('    Base URL: ' + base_url)
 print()
 
 ### Continue to rest of script. 
+policies_info_url = '{0}/policies/v1/{1}/policies'.format(base_url, cid)
+policies_info_response = requests.get(policies_info_url, headers=headers)
+policies_info = json.loads(policies_info_response.text)
+policy_id = [x for x in policies_info if x['name'] == entitlement]
+entitlement_id=policy_id[0]['id']
+exit()
+
+
 
 #Temp - Creating credentials works 
 def create_credentials (): 
@@ -206,9 +215,8 @@ def create_credentials ():
 	create_cred_response = requests.post(create_cred_url, create_payload, headers=headers)
 	create_cred_info = json.loads(create_cred_response.text)
 	credential_id = create_cred_info['id']
-
 	return credential_id
-
+       
 #Temp - Creating deployment doesn't work so far. The enabled = true is what is failing 
 def create_deployment ():
 
@@ -216,18 +224,23 @@ def create_deployment ():
 		"name": aws_id,
 		"platform": {
 			"type": "aws",
-			"id": "'$aws_id'",
+			"id": aws_id,
 			"monitor": {
-				"enabled": enabled,
-				"ct_install_region": "'$cd_install_region'"
+				"enabled": true,
+				"ct_install_region":  ct_install_region
 			}
 		},
 		"mode": mode,
-		"enabled": enabled,
-		"discover": enabled,
+		"enabled": true,
+		"discover": true,
 		"scan": true,
 		"scope": {
-			"include": [scope]
+			 "include": [
+            			{
+              			"type": "region",
+              			"key": "/aws/eu-west-1"
+            			}
+          		],
 		},
 		"cloud_defender": {
 			"enabled": false,
@@ -243,12 +256,13 @@ def create_deployment ():
 	create_deployment_payload=json.dumps(deployment_payload)
 	create_deployment_url = '{0}/deployments/v1/{1}/deployments'.format(base_url, cid)
 	create_deployment_response = requests.post(create_deployment_url, create_deployment_payload, headers=headers)
+	print(create_deployment_response)
 	create_deployment_info = json.loads(create_deployment_response.text)
 	print("----------------------")
 	print (create_deployment_info)
 	print("----------------------")
 	
 print("Creating Credentials")
-create_credentials()
+credential_id = create_credentials()
 print("Creating Deployment")
 create_deployment()
